@@ -8,15 +8,13 @@
 import Foundation
 
 class NavigationManager: ObservableObject {
+    @Published var currentDifficulty: Difficulty = .easy
     enum Screen {
         case mainMenu
-        case gameView(Difficulty)
-        case gameOver(totalScore: Int, awakenedCharacters: Int)
+        case gameView(difficulty: Difficulty)
+        case gameOver(totalScore: Int)
     }
+
     
-    @Published var currentScreen: Screen = .mainMenu {
-            didSet {
-                print("Смена экрана на: \(currentScreen)")
-            }
-        }
+    @Published var currentScreen: Screen = .mainMenu
 }

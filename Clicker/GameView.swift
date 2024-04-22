@@ -15,12 +15,15 @@ enum Difficulty {
 private let columns = [GridItem(.adaptive(minimum: 80))]
 
 struct GameView: View {
-    
+    @State private var characterCheckTimer = Timer.publish(every: 7, on: .main, in: .common).autoconnect()
+    @State private var viewKey = UUID()
+    @State private var isGameOver = false
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var characterManager: CharacterManager  
     let difficulty: Difficulty
     @EnvironmentObject var navigationManager: NavigationManager
     var onExit: (() -> Void)?
     
-    @StateObject private var characterManager = CharacterManager()
     
     @State private var gameDuration: Int = 0 // Длительность игры в минутах
     @State private var timeMultiplier: Double = 1.0 // Коэффициент ускорения времени
@@ -33,7 +36,6 @@ struct GameView: View {
     @State private var isActive = true
     @State private var characters: [Character] = []
     
-    @EnvironmentObject var appState: AppState
     
     let gameTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -60,7 +62,7 @@ struct GameView: View {
             
             Spacer()
             Text("Скорость времени: \(String(format: "%.1f", timeMultiplier))x")
-                            .padding()
+                .padding()
             Spacer()
             
             // Персонажи
@@ -80,29 +82,36 @@ struct GameView: View {
             
             Spacer()
             
-            // Кнопка "Сдаться"
             Button("Сдаться") {
-                let awakenedCharacters = characters.filter { $0.lives > 0 }.count
-                navigationManager.currentScreen = .gameOver(totalScore: score, awakenedCharacters: awakenedCharacters)
+                isGameOver = true
+                navigationManager.currentScreen = .gameOver(totalScore: score)
             }
+
+
+
+
             .padding()
             .background(Color.red)
             .foregroundColor(.white)
             .cornerRadius(10)
         }
         .onAppear {
-            setupInitialGameTime()
-            // Вызываем метод для генерации персонажей, не ожидая от него возвращаемого значения
-            characterManager.generateCharacters(for: difficulty, currentGameTime: gameCurrentTime)
-            // Теперь characters будут доступны напрямую из characterManager
+            let initialTime = setupInitialGameTime()
+            gameCurrentTime = initialTime
+            isGameOver = false // Сброс при входе в игровой экран
+            characterManager.generateCharacters(for: difficulty, currentGameTime: initialTime, appState: appState)
             characters = characterManager.characters
         }
+
+
+
         
         
         
         .onAppear {
             NotificationCenter.default.addObserver(forName: NSNotification.Name("GameOver"), object: nil, queue: .main) { _ in
                 showGameOver = true
+                isGameOver = true  // Установка флага окончания игры
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
@@ -112,45 +121,109 @@ struct GameView: View {
             isActive = true
         }
         .onReceive(gameTimer) { _ in
-            if isActive {
+            if isActive && !isGameOver {
                 updateGameTime()
             }
         }
+        .onReceive(characterCheckTimer) { _ in
+            if isActive && !isGameOver {
+                checkForUnawakenedCharacters()
+            }
+        }
+
         .fullScreenCover(isPresented: $showGameOver) {
             GameOverView(
-                
                 totalScore: score,
-                awakenedCharacters: characters.filter { $0.lives > 0 }.count, // Пример подсчета разбуженных персонажей
-                playAgainAction: {
-                    resetGame()
-                },
-                goToMainMenuAction: {
-                }
+                playAgainAction: resetGame,
+                goToMainMenuAction: endGame
             )
+
         }
+
+
+
     }
-    
-    func resetGame() {
-        showGameOver = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Добавляем небольшую задержку
-            self.resetKey = UUID()
-            self.navigationManager.currentScreen = .gameView(self.difficulty)
+    func checkForUnawakenedCharacters() {
+        let now = gameCurrentTime  // Используем текущее игровое время
+        let twoHours = 2 * 3600.0 // Две часа в секундах
+
+        for index in characters.indices {
+            if let wakeUpTime = characters[index].wakeUpTime, !characters[index].isAwake {
+                let timeSinceWakeUp = now.timeIntervalSince(wakeUpTime)
+                if timeSinceWakeUp > twoHours {
+                    print("Два часа прошли для персонажа на позиции \(index), теряет жизнь.")
+                    characters[index].loseLife()
+                    replaceCharacter(at: index)
+                }
+            }
         }
     }
 
-    
-    func setupInitialGameTime() {
-        // установка времени на 5 утра
-        let now = Date()
-        var calendar = Calendar.current
-        calendar.timeZone = TimeZone.current
-        var components = calendar.dateComponents([.year, .month, .day], from: now)
-        components.hour = 5
-        components.minute = 0
-        if let startGameTime = calendar.date(from: components) {
-            gameCurrentTime = startGameTime
+    func endGame() {
+        isGameOver = true
+        showGameOver = false
+        navigationManager.currentScreen = .mainMenu
+    }
+
+
+    func resetGame() {
+        showGameOver = false
+        gameDuration = 0
+        score = 0
+        timeMultiplier = 1.0
+        isGameOver = false  // Ensure game over is reset
+        gameCurrentTime = setupInitialGameTime()  // Reset game time
+
+        // Reset characters
+        characterManager.resetCharacters(for: difficulty, currentGameTime: gameCurrentTime, appState: appState)
+        characters = characterManager.characters
+
+        viewKey = UUID()
+    }
+
+
+
+    func resetCharactersAndGameSettings() {
+        let currentTime = setupInitialGameTime() // Получаем начальное время для новой игры
+        characterManager.resetCharacters(for: difficulty, currentGameTime: currentTime, appState: appState)
+    }
+
+
+    func replaceCharacter(at index: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            let currentCharacter = self.characters[index]
+            let newCharacter = self.characterManager.createRandomCharacter(lives: currentCharacter.lives, currentGameTime: self.gameCurrentTime, appState: self.appState)
+
+            // Устанавливаем новое время пробуждения так, чтобы оно было корректно интегрировано с текущим игровым временем
+            newCharacter.wakeUpTime = self.gameCurrentTime.addingTimeInterval(Double.random(in: 30...120) * 60)
+
+            // Важно сохранять число успешных пробуждений при замене персонажа
+            newCharacter.successfulWakeUps = currentCharacter.successfulWakeUps
+            
+            self.characters[index] = newCharacter
+            print("Персонаж на позиции \(index) заменен с новым временем пробуждения.")
         }
     }
+
+
+
+
+    
+
+    func setupInitialGameTime() -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+
+        let now = Date()
+        var components = calendar.dateComponents([.year, .month, .day], from: now)
+        components.hour = 6
+        components.minute = 0
+        components.second = 0
+
+        return calendar.date(from: components) ?? now
+    }
+
+
     
     func updateGameTime() {
         let baseAdditionalSeconds: Int // Базовое добавление секунд к времени игры, в зависимости от выбранной скорости

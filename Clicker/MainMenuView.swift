@@ -47,16 +47,20 @@ struct MainMenuView: View {
             Spacer()
             
             DifficultyButton(title: "Легкий", color: DesignConstants.Colors.easy) {
-                navigationManager.currentScreen = .gameView(.easy)
+                navigationManager.currentDifficulty = .easy
+                navigationManager.currentScreen = .gameView(difficulty: .easy)
             }
-            
+
             DifficultyButton(title: "Средний", color: DesignConstants.Colors.medium) {
-                navigationManager.currentScreen = .gameView(.medium)
+                navigationManager.currentDifficulty = .medium
+                navigationManager.currentScreen = .gameView(difficulty: .medium)
             }
-            
+
             DifficultyButton(title: "Сложный", color: DesignConstants.Colors.hard) {
-                navigationManager.currentScreen = .gameView(.hard)
+                navigationManager.currentDifficulty = .hard
+                navigationManager.currentScreen = .gameView(difficulty: .hard)
             }
+
             
             Spacer()
             

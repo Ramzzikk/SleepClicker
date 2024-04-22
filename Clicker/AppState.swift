@@ -14,16 +14,21 @@ class AppState: ObservableObject {
         }
     }
     // Словарь для хранения текущих скинов персонажей
-    @Published var currentSkins: [String: String] = ["Human": "man_1", "Pony": "horse_1"] {
+    @Published var currentSkins: [String: String] = ["Human": "man_1", "Pony": "horse_1", "Owl": "owl_1"] {
         didSet {
             saveCurrentSkins()
         }
     }
+    @Published var ownedSkins: [String] = []
+    var characterManager: CharacterManager?
 
     init() {
         loadAllScore()
         loadCurrentSkins()
+        ownedSkins = UserDefaults.standard.stringArray(forKey: "OwnedSkins") ?? []
+
     }
+
     
     private func saveAllScore() {
         UserDefaults.standard.set(allScore, forKey: "AllScore")
@@ -46,7 +51,23 @@ class AppState: ObservableObject {
     }
 
     // Обновление скина для определенного типа персонажа
-    func updateSkin(for type: String, to newSkin: String) {
-        currentSkins[type] = newSkin
+    func updateSkin(for characterType: String, to newSkinBaseName: String) {
+        print("Попытка обновить скин для \(characterType) на \(newSkinBaseName)")
+        currentSkins[characterType] = newSkinBaseName
+        saveCurrentSkins()
+        characterManager?.updateCharactersSkin(appState: self)
     }
+
+
+
+
+
+    func buySkin(_ skin: Skin) {
+            ownedSkins.append(skin.imageName)
+            UserDefaults.standard.set(ownedSkins, forKey: "OwnedSkins")
+        }
+
+        func isSkinOwned(_ skin: Skin) -> Bool {
+            ownedSkins.contains(skin.imageName)
+        }
 }

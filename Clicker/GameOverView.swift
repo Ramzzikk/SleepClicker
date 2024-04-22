@@ -2,7 +2,6 @@ import SwiftUI
 
 struct GameOverView: View {
     let totalScore: Int
-    let awakenedCharacters: Int
     var playAgainAction: () -> Void
     var goToMainMenuAction: () -> Void
     @EnvironmentObject var appState: AppState
@@ -13,10 +12,9 @@ struct GameOverView: View {
             Text("Игра окончена!")
                 .font(.largeTitle)
             Text("Итоговый счет: \(totalScore)")
-            Text("Разбуженных персонажей: \(awakenedCharacters)")
             
             Button(action: {
-                // Обновление totalScore в AppState перед новой игрой
+                navigationManager.currentScreen = .gameView(difficulty: navigationManager.currentDifficulty)
                 appState.allScore += totalScore
                 playAgainAction()
             }) {
@@ -28,7 +26,6 @@ struct GameOverView: View {
             }
             
             Button(action: {
-                // Обновление totalScore в AppState перед возвратом в главное меню
                 appState.allScore += totalScore
                 navigationManager.currentScreen = .mainMenu
             }) {
