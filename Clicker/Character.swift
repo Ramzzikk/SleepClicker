@@ -149,15 +149,6 @@ extension Character {
     }
 }
 
-// Пример начального скина для Human
-let defaultHumanSkin = Skin(name: "Стандартный человек", cost: 0, imageName: "man_1", characterType: "Human")
-
-// Пример начального скина для Pony
-let defaultPonySkin = Skin(name: "Милая пони", cost: 0, imageName: "horse_1", characterType: "Pony")
-
-// Пример начального скина для Owl
-let defaultOwlSkin = Skin(name: "Мудрая сова", cost: 0, imageName: "owl_1", characterType: "Owl")
-
 class Pony: Character {
     init(lives: Int, manager: CharacterManager, appState: AppState) {
         let skinNameBase = appState.currentSkins["Pony"] ?? "horse_1"

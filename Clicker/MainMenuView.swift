@@ -8,6 +8,8 @@
 import SwiftUI
 import AVFoundation
 
+// MARK: - Design Constants
+
 struct DesignConstants {
     static let buttonHeight: CGFloat = 30
     static let buttonWidth: CGFloat = 150
@@ -22,6 +24,8 @@ struct DesignConstants {
         static let shop = Color.orange.opacity(opacity)
     }
 }
+
+// MARK: - MainMenuView
 
 struct MainMenuView: View {
     @EnvironmentObject var appState: AppState
@@ -46,24 +50,23 @@ struct MainMenuView: View {
             
             Spacer()
             
+            // Difficulty selection
             DifficultyButton(title: "Легкий", color: DesignConstants.Colors.easy) {
                 navigationManager.currentDifficulty = .easy
                 navigationManager.currentScreen = .gameView(difficulty: .easy)
             }
-
             DifficultyButton(title: "Средний", color: DesignConstants.Colors.medium) {
                 navigationManager.currentDifficulty = .medium
                 navigationManager.currentScreen = .gameView(difficulty: .medium)
             }
-
             DifficultyButton(title: "Сложный", color: DesignConstants.Colors.hard) {
                 navigationManager.currentDifficulty = .hard
                 navigationManager.currentScreen = .gameView(difficulty: .hard)
             }
-
             
             Spacer()
             
+            // Feature buttons
             HStack(spacing: 20) {
                 FeatureButton(label: "Обучение", icon: "lightbulb", color: DesignConstants.Colors.tutorial) {
                     showingTutorial = true
@@ -78,6 +81,8 @@ struct MainMenuView: View {
         .sheet(isPresented: $showingShop) { ShopView().environmentObject(appState) }
     }
 }
+
+// MARK: - DifficultyButton
 
 struct DifficultyButton: View {
     var title: String
@@ -96,6 +101,8 @@ struct DifficultyButton: View {
         .cornerRadius(DesignConstants.cornerRadius)
     }
 }
+
+// MARK: - FeatureButton
 
 struct FeatureButton: View {
     var label: String

@@ -14,7 +14,6 @@
 		C24E1F872BB8F1BD00988C39 /* HapticFeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E1F862BB8F1BD00988C39 /* HapticFeedbackGenerator.swift */; };
 		C24E1F892BB904AC00988C39 /* 02 Whirling-In-Rags, 8 AM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C24E1F882BB904AC00988C39 /* 02 Whirling-In-Rags, 8 AM.mp3 */; };
 		C24E1F8B2BB970A300988C39 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E1F8A2BB970A300988C39 /* AppState.swift */; };
-		C24E1F8D2BB9F50000988C39 /* Shop.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E1F8C2BB9F50000988C39 /* Shop.swift */; };
 		C24E1F8F2BBA14BE00988C39 /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E1F8E2BBA14BE00988C39 /* ShopView.swift */; };
 		C277B3042BBAF31500CB955A /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277B3032BBAF31500CB955A /* TutorialView.swift */; };
 		C277B3062BBB8C5B00CB955A /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277B3052BBB8C5B00CB955A /* AudioManager.swift */; };
@@ -34,7 +33,6 @@
 		C24E1F862BB8F1BD00988C39 /* HapticFeedbackGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackGenerator.swift; sourceTree = "<group>"; };
 		C24E1F882BB904AC00988C39 /* 02 Whirling-In-Rags, 8 AM.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "02 Whirling-In-Rags, 8 AM.mp3"; sourceTree = "<group>"; };
 		C24E1F8A2BB970A300988C39 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		C24E1F8C2BB9F50000988C39 /* Shop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shop.swift; sourceTree = "<group>"; };
 		C24E1F8E2BBA14BE00988C39 /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
 		C277B3032BBAF31500CB955A /* TutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		C277B3052BBB8C5B00CB955A /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
@@ -88,7 +86,6 @@
 				C24E1F822BB8E0B200988C39 /* GameOverView.swift */,
 				C24E1F862BB8F1BD00988C39 /* HapticFeedbackGenerator.swift */,
 				C24E1F802BB867FC00988C39 /* CharacterManager.swift */,
-				C24E1F8C2BB9F50000988C39 /* Shop.swift */,
 				C24E1F8E2BBA14BE00988C39 /* ShopView.swift */,
 				C24E1F842BB8EE1900988C39 /* NavigationManager .swift */,
 				C277B3032BBAF31500CB955A /* TutorialView.swift */,
@@ -181,7 +178,6 @@
 				C277B3042BBAF31500CB955A /* TutorialView.swift in Sources */,
 				C24E1F8B2BB970A300988C39 /* AppState.swift in Sources */,
 				C28296D92BB0FE150026FE26 /* ContentView.swift in Sources */,
-				C24E1F8D2BB9F50000988C39 /* Shop.swift in Sources */,
 				C24E1F872BB8F1BD00988C39 /* HapticFeedbackGenerator.swift in Sources */,
 				C28296E52BB0FEAF0026FE26 /* MainMenuView.swift in Sources */,
 				C24E1F8F2BBA14BE00988C39 /* ShopView.swift in Sources */,

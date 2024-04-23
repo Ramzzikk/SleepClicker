@@ -91,7 +91,4 @@ class CharacterManager: ObservableObject {
             character.applySkin(skin: skin)
         }
     }
-
-
-
 }
