@@ -33,10 +33,16 @@ struct MainMenuView: View {
     
     @State private var showingShop = false
     @State private var showingTutorial = false
+    @State private var soundIsOn: Bool = UserDefaults.standard.bool(forKey: "soundIsOn")
+    
     
     init() {
-        AudioManager.shared.playBackgroundMusic(named: "02 Whirling-In-Rags, 8 AM")
+        // Играть музыку только если она уже не играет
+        if !AudioManager.shared.isPlaying {
+            AudioManager.shared.playBackgroundMusic(named: "02 Whirling-In-Rags, 8 AM")
+        }
     }
+    
     
     var body: some View {
         VStack {
@@ -47,7 +53,17 @@ struct MainMenuView: View {
             Text("Общий счет: \(appState.allScore)")
                 .font(.title2)
                 .padding()
-            
+            Button(action: {
+                            AudioManager.shared.toggleMute()
+                        }) {
+                            Image(systemName: AudioManager.shared.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                                .font(.largeTitle)  // Увеличиваем размер иконки
+                                .foregroundColor(AudioManager.shared.isMuted ? .gray : .blue)
+                        }
+                        .padding()
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .shadow(radius: 10)
             Spacer()
             
             // Difficulty selection
